@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Option Payoff Graph</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js">
+    <style>
+        body {
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .chart-container {
+            width: 90%; /* Set the width of the chart container to 90% of the viewport */
+            max-width: 600px; /* Set a maximum width to maintain readability */
+            height: 400px; /* Set a fixed height for the chart container */
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="chart-container">
+            <h1>Option Payoff Graph</h1>
+            <canvas id="payoff-chart"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Retrieve data from the URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const optionType = urlParams.get('optionType');
+        const spotPrice = parseInt(urlParams.get('spotPrice'));
+        const strikePrice = parseInt(urlParams.get('strikePrice'));
+        const premium = parseInt(urlParams.get('premium'));
+
+        // Generate the data for the graph
+        const sT = [];
+        for (let i = spotPrice - 100; i <= spotPrice + 100; i++) {
+            sT.push(i);
+        }
+
+        const payoff = [];
+        for (let i = 0; i < sT.length; i++) {
+            if (optionType === "call") {
+                payoff.push(Math.max(0, sT[i] - strikePrice) - premium);
+            } else if (optionType === "put") {
+                payoff.push(Math.max(0, strikePrice - sT[i]) - premium);
+            }
+        }
+
+        // Render the graph
+        const ctx = document.getElementById("payoff-chart").getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: sT,
+                datasets: [{
+                    label: 'Option Payoff',
+                    data: payoff,
+                    fill: false,
+                    borderColor: 'green', // Set the color of the graph line to green
+                    lineTension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Profit/Loss'
+                        }
+                    }],
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Infosys Stock Price'
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
+</body>
+</html>
