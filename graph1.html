@@ -10,7 +10,7 @@
             padding: 20px; /* Add padding to the body to create space at the top */
         }
 
-        .chart-container {
+      .chart-container {
     max-width: 100%;
     max-height: calc(100vh - 350px);
     margin: 0 auto; /* Center the chart horizontally */
@@ -18,8 +18,21 @@
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
     margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+}
+
+
 
         h1 {
             text-align: center;
@@ -47,7 +60,7 @@
     </div>
 
     <div class="chart-container">
-        <h1>Option Payoff Graph</h1>
+        
         <canvas id="payoff-chart"></canvas>
     </div>
 
