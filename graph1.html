@@ -2,34 +2,49 @@
 <html>
 <head>
     <title>Option Payoff Graph</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Add viewport meta tag -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js">
     <style>
         body {
             background-color: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+            padding: 20px; /* Add padding to the body to create space at the top */
         }
 
         .chart-container {
-            width: 100%;
-            max-width: 120vh;
-            height: auto;
+            max-width: 100%; /* Set the maximum width of the chart container */
+            max-height: calc(100vh - 350px); /* Set the maximum height of the chart container */
             background-color: #fff;
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px; /* Add margin at the bottom to create space */
         }
 
         h1 {
             text-align: center;
             margin-bottom: 20px;
         }
+
+        .info-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 20px; /* Add margin at the bottom to create space */
+        }
+
+        .info-container p {
+            margin: 0;
+        }
     </style>
 </head>
 <body>
+    <div class="info-container">
+        <p>Maximum Profit: <span id="max-profit"></span></p>
+        <p>Maximum Loss: <span id="max-loss"></span></p>
+    </div>
+
     <div class="chart-container">
         <h1>Option Payoff Graph</h1>
         <canvas id="payoff-chart"></canvas>
@@ -69,33 +84,44 @@
                     label: 'Option Payoff',
                     data: payoff,
                     fill: false,
-                    borderColor: 'rgb(0, 128, 0)', // Green color
+                    borderColor: 'green', // Set the line color to green
                     lineTension: 0.1
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: true,
+                maintainAspectRatio: false,
                 scales: {
-                    y: {
+                    yAxes: [{
                         scaleLabel: {
                             display: true,
                             labelString: 'Profit/Loss'
                         }
-                    },
-                    x: {
+                    }],
+                    xAxes: [{
                         scaleLabel: {
                             display: true,
                             labelString: 'Infosys Stock Price'
-                        },
-                        ticks: {
-                            min: spotPrice - 100,
-                            max: spotPrice + 100
                         }
-                    }
+                    }]
                 }
             }
         });
+
+        // Calculate and display the maximum profit and maximum loss based on option type
+        let maxProfit;
+        let maxLoss;
+
+        if (optionType === "call") {
+            maxProfit = "Unlimited";
+            maxLoss = -premium;
+        } else if (optionType === "put") {
+            maxProfit = strikePrice;
+            maxLoss = -premium;
+        }
+
+        document.getElementById("max-profit").textContent = maxProfit;
+        document.getElementById("max-loss").textContent = maxLoss;
     </script>
 </body>
 </html>
