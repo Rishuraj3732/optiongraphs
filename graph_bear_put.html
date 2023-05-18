@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bear Put Strategy - Payoff Graph</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .page-header {
+            background-color: #42b883;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        canvas {
+            width: 100%;
+            height: 400px; /* Adjust the height as needed */
+        }
+    </style>
+</head>
+<body>
+    <header class="page-header">
+        <h1>Bear Put Strategy - Payoff Graph</h1>
+    </header>
+
+    <div class="container mt-5">
+        <canvas id="payoff-chart"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Retrieve the strategy parameters from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const spotPrice = parseInt(urlParams.get("spotPrice"));
+        const strikePriceLongPut = parseInt(urlParams.get("strikePriceLongPut"));
+        const premiumLongPut = parseInt(urlParams.get("premiumLongPut"));
+        const strikePriceShortPut = parseInt(urlParams.get("strikePriceShortPut"));
+        const premiumShortPut = parseInt(urlParams.get("premiumShortPut"));
+
+        // Function to calculate the payoff for the bear put spread strategy
+        function calculatePayoff(sT) {
+            const payoffLongPut = Math.max(strikePriceLongPut - sT, 0) - premiumLongPut;
+            const payoffShortPut = Math.min(sT - strikePriceShortPut, 0) + premiumShortPut;
+            const payoffBearPutSpread = payoffLongPut + payoffShortPut;
+            return payoffBearPutSpread;
+        }
+
+        // Generate data for the chart
+        const stockPrices = Array.from({ length: 100 }, (_, i) => spotPrice - 50 + i);
+        const payoffs = stockPrices.map(calculatePayoff);
+
+        // Create the chart
+        const ctx = document.getElementById("payoff-chart").getContext("2d");
+        new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: stockPrices,
+                datasets: [{
+                    label: "Bear Put Spread Payoff",
+                    data: payoffs,
+                    borderColor: "green",
+                    backgroundColor: "white",
+                    fill: true,
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Stock Price",
+                        },
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: "Payoff",
+                        },
+                    },
+                },
+            },
+        });
+    </script>
+</body>
+</html>
